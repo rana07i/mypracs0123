@@ -1,0 +1,7 @@
+name = "Xpense Management System"
+core = 7.x
+version = 1.0
+description = 'Use to manage details of your income and expense'
+package = 'Custom'
+
+stylesheets[all][] = xm_css.css

@@ -1,0 +1,13 @@
+.form-element {
+	padding: 10px;
+  background: #E8E3E3;
+  padding-right: 5px;
+}
+
+.form-element div label  {
+	display: inline !important;
+}
+
+.form-element .form-submit{
+	background-color: #168FDA !important;
+}

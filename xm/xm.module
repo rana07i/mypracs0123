@@ -1,0 +1,220 @@
+<?php
+// $Id$
+
+//HELP HOOK
+function xm_help($path , $arg)
+{
+	if ($path == 'admin/help#xm' ) 
+	{
+		return t('Manage your income and expense details with XM module');
+	}
+}
+
+function xm_menu()
+{
+	$items['xm/new'] = array(
+		'title' => 'New Entry',
+		'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_get_form',
+    'description' => 'New Entry',
+    'page arguments' => array('xm_form'),
+    'access callback' => TRUE,
+	);
+
+	$items['xm/view'] = array(
+		'title' => 'Display Record',
+		'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'xm_view',
+    'description' => 'View Records',
+    // 'page arguments' => array('xm_view'),
+    'access callback' => TRUE,
+	);
+	
+
+	$items['xm/income'] = array(
+		'title' => 'List of Income',
+		'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'xm_income_view',
+    'description' => 'View Records',
+    // 'page arguments' => array('xm_view'),
+    'access callback' => TRUE,
+	);
+
+	$items['xm/expense'] = array(
+		'title' => 'List of Expense',
+		'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'xm_expense_view',
+    'description' => 'View Records',
+    // 'page arguments' => array('xm_view'),
+    'access callback' => TRUE,
+	);
+
+	return $items;
+}
+
+// NEW ENTRY FORM
+function xm_form($form, &$form_state)
+{
+	// Adds the library making it available for use.
+  drupal_add_library('system', 'ui.datepicker');
+  drupal_add_js(drupal_get_path('module','xm').'/xm_script.js');
+
+	$form['etyp'] = array(
+			'#type' => 'radios',
+			'#title' => 'Main Selection',
+			'#options' => array(
+					'I' => t('Income'),
+					'E' => t('Expense'),
+				),
+			'#required' => TRUE,
+			'#prefix' => '<div class="form-element">',
+    	'#suffix' => '</div>',
+		);
+
+	$form['amount'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Enter Amount',
+			'#required' => TRUE,
+			'#prefix' => '<div class="form-element">',
+    	'#suffix' => '</div>',
+		);
+
+	$form['des'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Enter Small description',
+			'#required' => TRUE,
+			'#prefix' => '<div class="form-element">',
+    	'#suffix' => '</div>',
+		);
+
+  // $format = 'd-m-y';
+  $form['date'] = array(
+    '#title' => 'Date',
+    '#type' => 'textfield',
+    // '#date_format' => $format,
+    // '#description' => t('Please select a date'),
+    '#prefix' => '<div class="form-element">',
+  	'#suffix' => '</div>',
+  );
+
+  $form['save'] = array(
+		'#type' => 'submit',
+		'#value' => 'SAVE',
+		'#prefix' => '<div class="form-element">',
+  	'#suffix' => '</div>',
+		);
+
+	return $form;
+}
+
+function xm_form_submit($form, &$form_state)
+{	
+	db_insert('xm_ent')
+	->fields(array('type','amt','des','date'))
+	->values(array(
+			'type' => $form_state['values']['etyp'],
+			'amt' => $form_state['values']['amount'],
+			'des' => $form_state['values']['des'],
+			'date' => strtotime($form_state['values']['date']),
+			))
+	->execute();
+
+	drupal_set_message(t('Data inserted succcessfully'),'staus');
+}
+
+function xm_view()
+{
+	$income = 0; $expense = 0;
+	$results = db_select('xm_ent','d')
+		->fields('d')
+		->execute();
+	if ($results->rowCount() > 0) 
+	{
+		foreach ($results as  $value) 
+		{	
+			$row[] = array('Type' => $value->type, 'Amount' => $value->amt, 'des' => $value->des);
+			($value->type == "I") ? $income += $value->amt : $expense += $value->amt;
+		}
+	}
+
+	$display = "<table><tr>
+					<td><h1><a href='".base_path()."xm/income'>Total Income<h1></a></td>
+					<td><a href='".base_path()."xm/income'><h3>".$income."</h3></a></td></tr>";
+	$display .= "<tr><td><h1>
+						<a href='".base_path()."xm/expense'>Total Expense</a><h1></td>
+						<td><h3><a href='".base_path()."xm/expense'>".$expense."</a></h3></td></tr>";
+	$display .= "<tr><td><h1>Balance<h1></td>
+						<td><h3><strong>".($income-$expense)."</strong></h3></td></tr></table>";
+
+	return $display;
+}
+
+function xm_income_view()
+{
+	$income = 0; $display2 = "";
+	$results = db_select('xm_ent','d')
+		->fields('d')
+		->condition('type','I')
+		->execute();
+
+	if ($results->rowCount() > 0) 
+	{
+		foreach ($results as  $value) 
+		{	
+			$row[] = array(
+				'amt' => $value->amt, 
+				'des' => $value->des,
+				'date' => date('d-M-y ', $value->date));
+			$income += $value->amt;
+		}
+	
+		$display2 = "<table><tr><th>Income List<h1></th><th>Date</th><th>Amount</th></tr>";
+		
+		foreach ($row as $value) {
+			$display2 .= "<tr><td>".$value['des']."</td>
+			<td>".$value['date']."</td>
+			<td align='right'>".$value['amt']."</td></tr>";
+		}
+
+		$display2 .= "<tr><td colspan='2'><h3><strong><u>Total</u></h3></strong></td>
+							<td><h3><strong>".$income."</h3></strong></td></tr></table>";
+	}
+	else 
+	{
+		$display2 .= "<h2>No records found</h2>";
+	}
+	return $display2;
+}
+
+function xm_expense_view()
+{
+	$expense = 0; $display3 = "";
+	$results = db_select('xm_ent','d')
+		->fields('d')
+		->condition('type','E')
+		->execute();
+
+	if ($results->rowCount() > 0) 
+	{
+		foreach ($results as  $value) 
+		{	
+			$row[] = array('amt' => $value->amt, 'des' => $value->des);
+			$expense += $value->amt;
+		}
+		
+		$display3 = "<table><tr><th>Expense List<h1></th><th>Amount</th></tr>";
+		
+		foreach ($row as $value) {
+			$display3 .= "<tr><td>".$value['des']."</td>
+								<td align='right'>".$value['amt']."</td></tr>";
+		}
+		$display3 .= "<tr><td><h3><strong><u>Total</u></h3></strong></td>
+						<td><h3><strong>".$expense."</strong></h3></td></tr></table>";
+	}
+	else 
+	{
+		$display3 .= "<h2>No records found</h2>";
+	}
+
+	return $display3;
+}

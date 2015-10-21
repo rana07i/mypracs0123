@@ -1,0 +1,17 @@
+<?php
+
+function xm_schema()
+{
+	$schema['xm_ent'] = array(
+	  'fields' => array(
+	    'pid'  => array('type' => 'serial', 'length' => 11, 'not null' => TRUE),
+	    'type' => array('type' => 'varchar','length' => 4, 'not null' => TRUE),
+	    'amt' => array('type' => 'int','length' => 11, 'not null' => TRUE),
+	    'des' => array('type' => 'text'),
+	    'date' => array('type' => 'int', 'length' => 20 ),
+	  ),
+	'primary key' => array('pid'),
+  );
+
+  return $schema;
+}
