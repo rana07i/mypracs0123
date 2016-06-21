@@ -1,0 +1,4 @@
+name = Intelliswift Custom Module
+description = Custom module intelliswift 
+version = VERSION
+core = 7.x

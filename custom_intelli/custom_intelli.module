@@ -1,0 +1,773 @@
+<?php
+
+function custom_intelli_preprocess_comment(&$variables){
+      $variables['commentor_name'] = $variables['#comment']->field_commentor_name['und'][0]['value'];
+      $variables['comment_body_1'] = $variables['#comment']->field_comment_body['und'][0]['value'];
+      $variables['comment_date'] =date('F j, Y' , strtotime($variables['created']));
+/*print_r($variables);
+echo "<pre>";
+print_r($variables['elements']['#comment']);
+echo "</pre>";*/
+}
+
+function custom_intelli_form_comment_form_alter(&$form, &$form_state) {
+     $form['actions']['submit']['#value'] = t('Post');
+}
+
+
+function custom_intelli_form_alter(&$form, &$form_state,$form_id) {
+      // print_r($form);
+      // print_r($form_id);
+
+      if ($form_id == "webform_client_form_466" || $form_id == "webform_client_form_568") {
+      // print_r($form);
+        $form['#validate'][] = 'custom_intelli_form_validate';
+        $countries = array
+        (
+            'AF' => 'Afghanistan',
+            'AX' => 'Aland Islands',
+            'AL' => 'Albania',
+            'DZ' => 'Algeria',
+            'AS' => 'American Samoa',
+            'AD' => 'Andorra',
+            'AO' => 'Angola',
+            'AI' => 'Anguilla',
+            'AQ' => 'Antarctica',
+            'AG' => 'Antigua And Barbuda',
+            'AR' => 'Argentina',
+            'AM' => 'Armenia',
+            'AW' => 'Aruba',
+            'AU' => 'Australia',
+            'AT' => 'Austria',
+            'AZ' => 'Azerbaijan',
+            'BS' => 'Bahamas',
+            'BH' => 'Bahrain',
+            'BD' => 'Bangladesh',
+            'BB' => 'Barbados',
+            'BY' => 'Belarus',
+            'BE' => 'Belgium',
+            'BZ' => 'Belize',
+            'BJ' => 'Benin',
+            'BM' => 'Bermuda',
+            'BT' => 'Bhutan',
+            'BO' => 'Bolivia',
+            'BA' => 'Bosnia And Herzegovina',
+            'BW' => 'Botswana',
+            'BV' => 'Bouvet Island',
+            'BR' => 'Brazil',
+            'IO' => 'British Indian Ocean Territory',
+            'BN' => 'Brunei Darussalam',
+            'BG' => 'Bulgaria',
+            'BF' => 'Burkina Faso',
+            'BI' => 'Burundi',
+            'KH' => 'Cambodia',
+            'CM' => 'Cameroon',
+            'CA' => 'Canada',
+            'CV' => 'Cape Verde',
+            'KY' => 'Cayman Islands',
+            'CF' => 'Central African Republic',
+            'TD' => 'Chad',
+            'CL' => 'Chile',
+            'CN' => 'China',
+            'CX' => 'Christmas Island',
+            'CC' => 'Cocos (Keeling) Islands',
+            'CO' => 'Colombia',
+            'KM' => 'Comoros',
+            'CG' => 'Congo',
+            'CD' => 'Congo, Democratic Republic',
+            'CK' => 'Cook Islands',
+            'CR' => 'Costa Rica',
+            'CI' => 'Cote D\'Ivoire',
+            'HR' => 'Croatia',
+            'CU' => 'Cuba',
+            'CY' => 'Cyprus',
+            'CZ' => 'Czech Republic',
+            'DK' => 'Denmark',
+            'DJ' => 'Djibouti',
+            'DM' => 'Dominica',
+            'DO' => 'Dominican Republic',
+            'EC' => 'Ecuador',
+            'EG' => 'Egypt',
+            'SV' => 'El Salvador',
+            'GQ' => 'Equatorial Guinea',
+            'ER' => 'Eritrea',
+            'EE' => 'Estonia',
+            'ET' => 'Ethiopia',
+            'FK' => 'Falkland Islands (Malvinas)',
+            'FO' => 'Faroe Islands',
+            'FJ' => 'Fiji',
+            'FI' => 'Finland',
+            'FR' => 'France',
+            'GF' => 'French Guiana',
+            'PF' => 'French Polynesia',
+            'TF' => 'French Southern Territories',
+            'GA' => 'Gabon',
+            'GM' => 'Gambia',
+            'GE' => 'Georgia',
+            'DE' => 'Germany',
+            'GH' => 'Ghana',
+            'GI' => 'Gibraltar',
+            'GR' => 'Greece',
+            'GL' => 'Greenland',
+            'GD' => 'Grenada',
+            'GP' => 'Guadeloupe',
+            'GU' => 'Guam',
+            'GT' => 'Guatemala',
+            'GG' => 'Guernsey',
+            'GN' => 'Guinea',
+            'GW' => 'Guinea-Bissau',
+            'GY' => 'Guyana',
+            'HT' => 'Haiti',
+            'HM' => 'Heard Island & Mcdonald Islands',
+            'VA' => 'Holy See (Vatican City State)',
+            'HN' => 'Honduras',
+            'HK' => 'Hong Kong',
+            'HU' => 'Hungary',
+            'IS' => 'Iceland',
+            'IN' => 'India',
+            'ID' => 'Indonesia',
+            'IR' => 'Iran, Islamic Republic Of',
+            'IQ' => 'Iraq',
+            'IE' => 'Ireland',
+            'IM' => 'Isle Of Man',
+            'IL' => 'Israel',
+            'IT' => 'Italy',
+            'JM' => 'Jamaica',
+            'JP' => 'Japan',
+            'JE' => 'Jersey',
+            'JO' => 'Jordan',
+            'KZ' => 'Kazakhstan',
+            'KE' => 'Kenya',
+            'KI' => 'Kiribati',
+            'KR' => 'Korea',
+            'KW' => 'Kuwait',
+            'KG' => 'Kyrgyzstan',
+            'LA' => 'Lao People\'s Democratic Republic',
+            'LV' => 'Latvia',
+            'LB' => 'Lebanon',
+            'LS' => 'Lesotho',
+            'LR' => 'Liberia',
+            'LY' => 'Libyan Arab Jamahiriya',
+            'LI' => 'Liechtenstein',
+            'LT' => 'Lithuania',
+            'LU' => 'Luxembourg',
+            'MO' => 'Macao',
+            'MK' => 'Macedonia',
+            'MG' => 'Madagascar',
+            'MW' => 'Malawi',
+            'MY' => 'Malaysia',
+            'MV' => 'Maldives',
+            'ML' => 'Mali',
+            'MT' => 'Malta',
+            'MH' => 'Marshall Islands',
+            'MQ' => 'Martinique',
+            'MR' => 'Mauritania',
+            'MU' => 'Mauritius',
+            'YT' => 'Mayotte',
+            'MX' => 'Mexico',
+            'FM' => 'Micronesia, Federated States Of',
+            'MD' => 'Moldova',
+            'MC' => 'Monaco',
+            'MN' => 'Mongolia',
+            'ME' => 'Montenegro',
+            'MS' => 'Montserrat',
+            'MA' => 'Morocco',
+            'MZ' => 'Mozambique',
+            'MM' => 'Myanmar',
+            'NA' => 'Namibia',
+            'NR' => 'Nauru',
+            'NP' => 'Nepal',
+            'NL' => 'Netherlands',
+            'AN' => 'Netherlands Antilles',
+            'NC' => 'New Caledonia',
+            'NZ' => 'New Zealand',
+            'NI' => 'Nicaragua',
+            'NE' => 'Niger',
+            'NG' => 'Nigeria',
+            'NU' => 'Niue',
+            'NF' => 'Norfolk Island',
+            'MP' => 'Northern Mariana Islands',
+            'NO' => 'Norway',
+            'OM' => 'Oman',
+            'PK' => 'Pakistan',
+            'PW' => 'Palau',
+            'PS' => 'Palestinian Territory, Occupied',
+            'PA' => 'Panama',
+            'PG' => 'Papua New Guinea',
+            'PY' => 'Paraguay',
+            'PE' => 'Peru',
+            'PH' => 'Philippines',
+            'PN' => 'Pitcairn',
+            'PL' => 'Poland',
+            'PT' => 'Portugal',
+            'PR' => 'Puerto Rico',
+            'QA' => 'Qatar',
+            'RE' => 'Reunion',
+            'RO' => 'Romania',
+            'RU' => 'Russian Federation',
+            'RW' => 'Rwanda',
+            'BL' => 'Saint Barthelemy',
+            'SH' => 'Saint Helena',
+            'KN' => 'Saint Kitts And Nevis',
+            'LC' => 'Saint Lucia',
+            'MF' => 'Saint Martin',
+            'PM' => 'Saint Pierre And Miquelon',
+            'VC' => 'Saint Vincent And Grenadines',
+            'WS' => 'Samoa',
+            'SM' => 'San Marino',
+            'ST' => 'Sao Tome And Principe',
+            'SA' => 'Saudi Arabia',
+            'SN' => 'Senegal',
+            'RS' => 'Serbia',
+            'SC' => 'Seychelles',
+            'SL' => 'Sierra Leone',
+            'SG' => 'Singapore',
+            'SK' => 'Slovakia',
+            'SI' => 'Slovenia',
+            'SB' => 'Solomon Islands',
+            'SO' => 'Somalia',
+            'ZA' => 'South Africa',
+            'GS' => 'South Georgia And Sandwich Isl.',
+            'ES' => 'Spain',
+            'LK' => 'Sri Lanka',
+            'SD' => 'Sudan',
+            'SR' => 'Suriname',
+            'SJ' => 'Svalbard And Jan Mayen',
+            'SZ' => 'Swaziland',
+            'SE' => 'Sweden',
+            'CH' => 'Switzerland',
+            'SY' => 'Syrian Arab Republic',
+            'TW' => 'Taiwan',
+            'TJ' => 'Tajikistan',
+            'TZ' => 'Tanzania',
+            'TH' => 'Thailand',
+            'TL' => 'Timor-Leste',
+            'TG' => 'Togo',
+            'TK' => 'Tokelau',
+            'TO' => 'Tonga',
+            'TT' => 'Trinidad And Tobago',
+            'TN' => 'Tunisia',
+            'TR' => 'Turkey',
+            'TM' => 'Turkmenistan',
+            'TC' => 'Turks And Caicos Islands',
+            'TV' => 'Tuvalu',
+            'UG' => 'Uganda',
+            'UA' => 'Ukraine',
+            'AE' => 'United Arab Emirates',
+            'GB' => 'United Kingdom',
+            'US' => 'United States',
+            'UM' => 'United States Outlying Islands',
+            'UY' => 'Uruguay',
+            'UZ' => 'Uzbekistan',
+            'VU' => 'Vanuatu',
+            'VE' => 'Venezuela',
+            'VN' => 'Viet Nam',
+            'VG' => 'Virgin Islands, British',
+            'VI' => 'Virgin Islands, U.S.',
+            'WF' => 'Wallis And Futuna',
+            'EH' => 'Western Sahara',
+            'YE' => 'Yemen',
+            'ZM' => 'Zambia',
+            'ZW' => 'Zimbabwe',
+            );
+
+            $ip = ip_address();
+            $api = file_get_contents('http://api.db-ip.com/addrinfo?addr='.$ip.'&api_key=780e61a4a642daacdedc3f59ecf618816529f9ae');
+            $api = json_decode($api,true);
+
+            $text = "ZXCVBNMLKJHGFDSAQWERTYUIOP0987654321qwertyuioplkjhgfdsazxcvbnm";
+
+            $token = str_shuffle($text);
+            $token = substr($token,0,14);
+
+                // ASSIGING VALUES TO HIDDEN FIELD OF FORM
+            $form['submitted']['token']['#value'] = $token;
+            $form['submitted']['cnt_nm']['#value'] = $countries[ $api['country'] ];
+            $form['submitted']['city_nm']['#value'] = $api['city'];
+
+      }
+}
+
+function custom_intelli_webform_submission_insert($node, $submission) {
+  // Insert a record into a 3rd-party module table when a submission is added.
+      // print_r($submission);
+      // exit;
+      if($node->nid == 466 || $node->nid == 568 ){
+          db_insert('download_token')
+          ->fields(array(
+              'token' => $submission->data[10]['value'][0], 
+              'sid' => $submission->sid,))
+          ->execute();
+
+    }
+}
+
+function custom_intelli_menu(){
+      $items['token_check/%'] = array(
+            'title' => 'token authentication',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'page callback' => 'token_auth_process',
+            'description' => 'token authentication processing',
+            'access callback' => TRUE, );
+
+      $items['report_sent'] = array(
+            'title' => 'Consolidated Email of download',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'page callback' => 'download_report_sent',
+            'description' => 'Consolidated Email of download',
+            'access callback' => TRUE, );
+
+      $items['admin/config/system/block_email'] = array(
+        'title' => t('Blocked email list'),
+        'description' => t('Blocked domain list'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('custom_intelli_admin'),
+        'access arguments' => array('access administration pages'),
+        'type' => MENU_NORMAL_ITEM,
+      );
+
+      return $items;
+}
+
+
+
+
+function token_auth_process()
+{
+      global $base_url;
+      $str = " ";
+      //  CHECK IN TOKEN TABLE
+      $result = db_select('download_token', 'n')
+      ->fields('n')
+      ->condition('token', arg(1),'=')
+      ->condition('sid', arg(2),'=')
+      ->condition('expired', 0,'=')
+      ->execute()
+      ->fetchAssoc();
+
+      if ( !empty($result['token']) ) {
+            $str = "token=".$result['token']." || sid=".$result['sid'];
+            //  GET SUBMITTED DATA
+            $result2 = db_select('webform_submitted_data', 'n')
+            ->fields('n')
+            ->condition('nid', array(466,568) )
+            ->condition('sid', $result['sid'],'=')
+            ->execute()
+            ->fetchAll();
+            foreach($result2 as $v){
+                  $data[] = $v->data;
+            }
+
+            //  GET THE DOWNLOADABLE LINK
+            if ( !empty($data[10]) ) {
+                  // GET LINK DETAILS
+                  $query = new EntityFieldQuery();
+                  $result3 = $query->entityCondition('entity_type', 'node')
+                    ->entityCondition('bundle', array('dwn_list', 'case_studies'))
+                    ->propertyCondition('title', $data[10],'=')
+                    ->range(0,1)
+                    ->execute();
+
+                  foreach ($result3['node'] as $v3) {
+                     $node = node_load($v3->nid);
+                     // print_r($node->field_typ[LANGUAGE_NONE][0]['value']);
+                     if ($node->type == 'case_studies') {
+                        $data['category'] = "Case study";
+                        $type = 'pdf';
+                        $link = file_create_url($node->field_download[LANGUAGE_NONE][0]['uri']);
+                        $fnm = $node->field_download[LANGUAGE_NONE][0]['filename'];
+                     } else {
+                        $data['category'] = $node->field_category[LANGUAGE_NONE][0]['value'];
+                           if ($node->field_type[LANGUAGE_NONE][0]['value'] == 'pdf') {
+                            $type = 'pdf';
+                            $link = file_create_url($node->field_upload[LANGUAGE_NONE][0]['uri']);
+                            $fnm = $node->field_upload[LANGUAGE_NONE][0]['filename'];
+                                 // $link = $base_url."/system/files/downloads/".$node->field_upload[LANGUAGE_NONE][0]['filename'];
+                           } elseif ($node->field_type[LANGUAGE_NONE][0]['value'] == 'link') {
+                              $type = 'link';
+                              $link = $node->field_html_path[LANGUAGE_NONE][0]['value'];
+                           }
+                     }
+                  }
+            }
+            
+            $num_updated = db_update('download_token')
+              ->fields(array( 'expired' => 1, ))
+              ->condition('id', $result['id'])
+              ->execute();
+
+            if ($type == "pdf") {
+              custom_intelli_mail_send($data,"download_confirmation");
+              header('Content-type: application/pdf');
+              header('Content-Disposition: attachment; filename="'.$fnm.'"');
+              readfile($link);
+              // header("Location: ".$link);
+              exit();
+            } else {
+              custom_intelli_mail_send($data,"download_confirmation");
+              header("Location: ".$link);
+              return "<script>window.close();</script>";
+            }
+      } else {
+            return "<h3 align='center'> PDF already downloaded.<br>To again download and view, please refill the form and submit.</h3>";
+      }
+
+}
+
+function custom_intelli_mail($key, &$message, $params) {
+  global $user;
+  global $base_url;
+
+  $options = array(
+    'langcode' => $message['language']->language,
+  );
+
+  switch ($key) {
+    case 'download_confirmation':
+      $message['headers']['BCC'] = 'hiren.parmar@intelliswift.co.in,parag.wadkar@intelliswift.co.in';
+      $message['subject'] = t( ''.$params[0].' '.$params[1].' interested in '.ucfirst($params['category']), array('@site-name' => variable_get('site_name', 'Intelliswift')), $options);
+if (empty($params[2])) { $title = "-"; } else { $title =  $params[2]; }
+if (empty($params[3])) { $cmp = "-";} else { $cmp = $params[3]; }
+      $html = '<!DOCTYPE html><html>
+<body>
+<div style="border:1px solid rgb(225,225,225);border-collapse:collapse;padding: 5px;">
+  <img src="http://www.intelliswift.com/sites/all/themes/intelliswift/images/logo-intelliswift.png" title="intelliswift logo">
+  <hr><br>
+      <table cellpadding="5">
+    <tr>
+      <td width="20%">Name:</td><td>'.$params[0].' '.$params[1].'</td>
+    </tr>
+    <tr>
+      <td>Title:</td><td>'.$title.'</td>
+    </tr>
+    <tr>
+      <td>Company:</td><td>'.$cmp.'</td>
+    </tr>
+    <tr>
+      <td>Phone:</td><td>'.$params[4].'</td>
+    </tr>
+    <tr>
+      <td>Email:</td><td>'.$params[5].'</td>
+    </tr>
+    <tr>
+      <td>Industries:</td><td>'.$params[6].'</td>
+    </tr>
+    <tr>
+      <td>City:</td><td>'.$params[8].', '.$params[7].'</td>
+    </tr>
+    <tr>
+      <td>'.ucfirst($params['category']).' title:</td><td>'.$params[10].'</td>
+    </tr>
+  </table></div></body></html>';
+      $message['body'][] = $html;
+      break;
+
+      case 'download_report':
+      // $message['headers']['BCC'] = 'hiren.parmar@intelliswift.co.in,parag.wadkar@intelliswift.co.in,tushar.rana@intelliswift.co.in';
+      $message['subject'] = t('@site-name Report of Download from '.$params['from'].' to '.$params['to'].' (24 hours)', array('@site-name' => variable_get('site_name', 'Intelliswift')), $options);
+            $html = '<!DOCTYPE html>
+            <html>
+            <body>
+            <div style="border:1px solid rgb(225,225,225);border-collapse:collapse;padding: 5px;">
+              <img src="http://www.intelliswift.com/sites/all/themes/intelliswift/images/logo-intelliswift.png" title="intelliswift logo"><br>
+                  <table cellpadding="5" border="1">';
+        if ( $params['com']['data_count'] == 0 && ($params['dotcoin']['data_count'] == 0 && $params['dotsg']['data_count'] == 0) ) {
+                   $html .= '<tr><td colspan="7" align="center"><h3>No download requests in past 24 hours</h3></td></tr>';
+        } else {
+                  // FROM COM
+            if ($params['com']['data_count'] > 0) {
+                  $html .= '<tr><td colspan="7" align="center"><h2>SOURCE: http://www.intelliswift.com</h2></td></tr>';
+                  $html .= '<tr align="left" bgcolor="#BFBABA">
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Phone no.</th>
+                        <th>Email ID</th>
+                        <th>Downloaded file</th>
+                        <th>Download Status</th>
+                        <th>Date Time</th>
+                        </tr>';
+                  foreach ($params['com'] as $k =>  $value) {
+                              if(is_numeric($k)){
+                                    $html .= '<tr>
+                                                <td>'.$value['name'].'</td>
+                                                <td>'.$value['loc'].'</td>
+                                                <td>'.$value['phone'].'</td>
+                                                <td>'.$value['email'].'</td>
+                                                <td>'.$value['downloaded_name'].'</td>
+                                                <td>'.$value['download'].'</td>
+                                                <td>'.$value['ent_dt'].'</td>
+                                    </tr>';
+                              }
+                  }
+            }
+
+            // FROM COIN
+            if ($params['dotcoin']['data_count'] > 0) {
+                  $html .= '<tr><td colspan="7" align="center"><h2>SOURCE: http://www.intelliswift.co.in</h2></td></tr>';
+                  $html .= '<tr align="left" bgcolor="#BFBABA">
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Phone no.</th>
+                        <th>Email ID</th>
+                        <th>Downloaded file</th>
+                        <th>Download Status</th>
+                        <th>Date Time</th>
+                        </tr>';
+                  foreach ($params['dotcoin'] as $k =>  $value) {
+                              if(is_numeric($k)){
+                                    $html .= '<tr>
+                                                <td>'.$value['name'].'</td>
+                                                <td>'.$value['loc'].'</td>
+                                                <td>'.$value['phone'].'</td>
+                                                <td>'.$value['email'].'</td>
+                                                <td>'.$value['downloaded_name'].'</td>
+                                                <td>'.$value['download'].'</td>
+                                                <td>'.$value['ent_dt'].'</td>
+                                    </tr>';
+                              }
+                  }
+            }
+
+            // FROM SG
+            if ($params['dotsg']['data_count'] > 0) {
+                  $html .= '<tr><td colspan="7" align="center"><h2>SOURCE: http://www.intelliswift.sg</h2></td></tr>';
+                  $html .= '<tr align="left" bgcolor="#BFBABA">
+                        <th>Name</th>
+                        <th>City</th>
+                        <th>Phone no.</th>
+                        <th>Email ID</th>
+                        <th>Downloaded file</th>
+                        <th>Download Status</th>
+                        <th>Date Time</th>
+                        </tr>';
+                  foreach ($params['dotsg'] as $k =>  $value) {
+                              if(is_numeric($k)){
+                                    $html .= '<tr>
+                                                <td>'.$value['name'].'</td>
+                                                <td>'.$value['loc'].'</td>
+                                                <td>'.$value['phone'].'</td>
+                                                <td>'.$value['email'].'</td>
+                                                <td>'.$value['downloaded_name'].'</td>
+                                                <td>'.$value['download'].'</td>
+                                                <td>'.$value['ent_dt'].'</td>
+                                    </tr>';
+                              }
+                  }
+            }
+
+          }
+
+            $html .= '</tbody></table></div></body></html>';
+            $message['body'][] = $html;
+            break;
+  }
+
+
+}
+
+function custom_intelli_mail_send($form_values, $key = "") 
+{
+switch ($key) {
+ case 'download_report':
+        // Report Sent
+        $module = 'custom_intelli';
+        // $key = 'download_report';
+        $to = "tushar.rana@intelliswift.co.in";
+        // $to = "marketing@intelliswift.com";
+        $from = 'connect@intelliswift.com';
+        $params = $form_values;
+        $language = language_default();
+        $send = TRUE;
+        $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+        if ($result['result'] == TRUE) {
+          drupal_set_message(t('Your message has been sent.'));
+        }
+        else {
+          drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
+        }
+  break;
+
+  case 'download_confirmation':
+         // SOURCE MAIL
+          $module = 'custom_intelli';
+          // $key = 'download_confirmation';
+          // $to = "tushar.rana@intelliswift.co.in";
+          $to = "marketing@intelliswift.com";
+          $from = 'connect@intelliswift.com';
+          $params = $form_values;
+          $language = language_default();
+          $send = TRUE;
+          $result = drupal_mail($module, $key, $to, $language, $params, $from, $send);
+          if ($result['result'] == TRUE) {
+            drupal_set_message(t('Your message has been sent.'));
+          }
+          else {
+            drupal_set_message(t('There was a problem sending your message and it was not sent.'), 'error');
+          }
+  break;
+}
+  
+}
+
+function download_report_sent()
+{
+  $from_date = date('M d [H:i:s]', strtotime("-24 hours") );
+  $to_date = date('M d [H:i:s]', time() );
+  $nm = "";$ph="";$em="";$download_name="";$loc="";
+  // GET LAST 6 HOURS DATA
+  $token_data = db_query("SELECT * FROM download_token WHERE TIMESTAMP >= DATE_SUB( NOW( ) , INTERVAL 24 HOUR ) ");
+  $newdata['com']['data_count'] = $token_data ->rowCount();
+  foreach($token_data as $val){
+    $dt =  strtotime($val->timestamp);
+    $ent_dt = date('M d, H:i:s', $dt );
+    // GET SUBMITTED DATA
+    $webform_data = db_select('webform_submitted_data', 'n')
+    ->fields('n')
+    ->condition('nid',  array(466, 568) )
+    ->condition('sid', $val->sid,'=')
+    ->execute()
+    ->fetchAll();
+
+    foreach($webform_data as  $v)
+    {
+
+          if ( $v->cid == 1 || $v->cid == 2 ) { $nm .= $v->data." "; }
+          if ($v->cid == 5) { $ph = $v->data; }
+          if ($v->cid == 6) { $em = $v->data; }
+          if ($v->cid == 11) { $download_name = $v->data; }
+          if ($v->cid == 8) { $loc = ','.$v->data; }
+          if ($v->cid == 9) { $loc = $v->data.$loc; }
+          if ($val->expired == 1) { $d = "Downloaded"; } else { $d = "Not Downloaded"; }
+
+          if ($v->cid == 11) {
+              $newdata['com'][] = array(
+              'name' => trim($nm),
+              'phone' => $ph,
+              'ent_dt' => $ent_dt,
+              'email' => $em ,
+              'download' => $d,
+              'loc' => $loc,
+              'downloaded_name' => $download_name ); 
+              $nm = " "; $ph =" "; $em = " "; $d =" "; $download_name=" ";$loc=" ";
+          }
+    }
+  }
+  unset($token_data, $webform_data, $val, $v, $dt, $ent_dt, $nm, $ph, $em, $d, $loc, $downloaded_name);
+    // FROM DOTCOIN
+    db_set_active('dotcoin');
+    // GET LAST 24 HOURS DATA
+    $token_data = db_query("SELECT * FROM download_token WHERE TIMESTAMP >= DATE_SUB( NOW( ) , INTERVAL 24 HOUR ) "); 
+    $newdata['dotcoin']['data_count'] = $token_data ->rowCount();
+    foreach($token_data as $val){
+      $dt =  strtotime($val->timestamp);
+      $ent_dt = date('M d, H:i:s', $dt );
+      // GET SUBMITTED DATA
+      $webform_data = db_select('webform_submitted_data', 'n')
+      ->fields('n')
+      ->condition('nid', 494,'=')
+      ->condition('sid', $val->sid,'=')
+      ->execute()
+      ->fetchAll();
+
+      foreach($webform_data as  $v)
+      {
+            if ( $v->cid == 1 || $v->cid == 2 ) { $nm .= $v->data." "; }
+            if ($v->cid == 5) { $ph = $v->data; }
+            if ($v->cid == 6) { $em = $v->data; }
+            if ($v->cid == 11) { $download_name = $v->data; }
+            if ($v->cid == 8) { $loc = ','.$v->data; }
+            if ($v->cid == 9) { $loc = $v->data.$loc; }
+            if ($val->expired == 1) { $d = "Downloaded"; } else { $d = "Not Downloaded"; }
+
+            if ($v->cid == 11) {
+                $newdata['dotcoin'][] = array(
+                'name' => trim($nm),
+                'phone' => $ph,
+                'ent_dt' => $ent_dt,
+                'email' => $em ,
+                'download' => $d,
+                'loc' => $loc,
+                'downloaded_name' => $download_name ); 
+                $nm = " "; $ph =" "; $em = " "; $d =" "; $download_name=" ";$loc=" ";
+            }
+      }
+    }
+    unset($token_data, $webform_data, $val, $v, $dt, $ent_dt, $nm, $ph, $em, $d, $loc, $downloaded_name);
+    
+    // FROM DOTSG
+    db_set_active('dotsg');
+    // GET LAST 24 HOURS DATA
+    $token_data = db_query("SELECT * FROM download_token WHERE TIMESTAMP >= DATE_SUB( NOW( ) , INTERVAL 24 HOUR ) "); 
+    $newdata['dotsg']['data_count'] = $token_data ->rowCount();
+    foreach($token_data as $val){
+      $dt =  strtotime($val->timestamp);
+      $ent_dt = date('M d, H:i:s', $dt );
+      // GET SUBMITTED DATA
+      $webform_data = db_select('webform_submitted_data', 'n')
+      ->fields('n')
+      ->condition('nid', 453,'=')
+      ->condition('sid', $val->sid,'=')
+      ->execute()
+      ->fetchAll();
+
+      foreach($webform_data as  $v)
+      {
+
+            if ( $v->cid == 1 || $v->cid == 2 ) { $nm .= $v->data." "; }
+            if ($v->cid == 5) { $ph = $v->data; }
+            if ($v->cid == 6) { $em = $v->data; }
+            if ($v->cid == 11) { $download_name = $v->data; }
+            if ($v->cid == 8) { $loc = ','.$v->data; }
+            if ($v->cid == 9) { $loc = $v->data.$loc; }
+            if ($val->expired == 1) { $d = "Downloaded"; } else { $d = "Not Downloaded"; }
+
+            if ($v->cid == 11) {
+                $newdata['dotsg'][] = array(
+                'name' => trim($nm),
+                'phone' => $ph,
+                'ent_dt' => $ent_dt,
+                'email' => $em ,
+                'download' => $d,
+                'loc' => $loc,
+                'downloaded_name' => $download_name ); 
+                $nm = " "; $ph =" "; $em = " "; $d =" "; $download_name=" ";$loc=" ";
+            }
+      }
+    }
+    unset($token_data, $webform_data, $val, $v, $dt, $ent_dt, $nm, $ph, $em, $d, $loc, $downloaded_name);
+
+    db_set_active();
+
+  $newdata['from'] = $from_date;
+  $newdata['to'] = $to_date;
+
+  custom_intelli_mail_send($newdata,"download_report");
+  return "MAIL SENT TO ADMIN ID";
+}
+
+function custom_intelli_admin($form,&$form_state)
+{
+      $form['block_email'] = array(
+        '#title' => t('Blocked domain for email id: '),
+        '#type' => 'textarea',
+        '#required' => TRUE,
+        '#default_value' => variable_get('block_email'),
+        '#description' => t('Multiple email id should be Comma separated (,) and on new line.'),
+      );
+
+      return system_settings_form($form);
+}
+
+function custom_intelli_form_validate($form, &$form_state)
+{
+      $pos = strpos($form_state['values']['submitted']['email'],"@");
+      $u_dom = substr($form_state['values']['submitted']['email'],$pos+1);
+
+      $arr2 =  (explode(",",variable_get('block_email') )); // TAKE DOMAIN FROM SYSTEM FORM
+      for($i = 0; $i < count($arr2); $i++){
+            $block_dom[] = trim($arr2[$i]);
+      }
+      if (in_array( $u_dom , $block_dom )  ) {
+            form_set_error('submitted[email]', t('Please give your valid Email'));
+      }
+}
